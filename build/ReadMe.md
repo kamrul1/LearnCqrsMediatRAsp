@@ -138,4 +138,82 @@ of the created object is available.
 location: https://localhost:5001/api/Products/6 
 ```
 
+## MediatR Notifications
+
+This is useful when we need multiple handlers for a single request. Some use cases
+are:
+- Sending an email
+- Invalidating a cache
+
+To demo feature, add method to be called in the repo by the event
+```csharp
+public async Task EventOccured(Product product, string evt)
+{
+    products.SingleOrDefault(p=>p.Id==product.Id).Name = $"{product.Name} evt: {evt}";
+
+    await Task.CompletedTask;
+}
+```
+
+Create the create a INotification with a single project
+```csharp
+public record ProductAddedNotification(Product Product) : INotification;
+```
+Create Notification Handler1
+```csharp
+public class EmailHandler : INotificationHandler<ProductAddedNotification>
+{
+    private readonly FakeDataStore _fakeDataStore;
+
+    public EmailHandler(FakeDataStore fakeDataStore) => _fakeDataStore = fakeDataStore;
+
+    public async Task Handle(ProductAddedNotification notification, CancellationToken cancellationToken)
+    {
+        await _fakeDataStore.EventOccured(notification.Product, "Email sent");
+        await Task.CompletedTask;
+    }
+}
+
+```
+Create Notification Handler2
+```csharp
+public class CacheInvalidationHandler : INotificationHandler<ProductAddedNotification>
+{
+    private readonly FakeDataStore _fakeDataStore;
+
+    public CacheInvalidationHandler(FakeDataStore fakeDataStore) => _fakeDataStore = fakeDataStore;
+
+    public async Task Handle(ProductAddedNotification notification, CancellationToken cancellationToken)
+    {
+        await _fakeDataStore.EventOccured(notification.Product, "Cache Invalidated");
+        await Task.CompletedTask;
+    }
+}
+```
+
+With these two classes, we create two handlers called EmailHandler and CacheInvalidationHandler that essentially do the same thing:
+
+Implement INotificationHandler\<ProductAddedNotification>, signifying it can handle that event
+Call the EventOccured method on FakeDataStore, specifying the event that occurred.
+
+## Trigger the Notifications by Publish
+
+Add extra line in AddProduct method for controller:
+```csharp
+await mediator.Publish(new ProductAddedNotification(productToReturn));
+```
+This could have also been done inside the AddProductCommand, instead of the controller
+
+To trigger the notification. Call the AddProduct method on the controller using
+the Swagger UI.
+
+Here is an example response:
+```js
+{
+  "id": 7,
+  "name": "string by kam evt: Cache Invalidated evt: Email sent"
+}
+```
+
+
 

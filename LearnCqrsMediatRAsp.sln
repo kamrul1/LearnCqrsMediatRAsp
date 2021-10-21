@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{C3C140C7-57A2-4780-8F55-20E2A2F2CB23}"
 	ProjectSection(SolutionItems) = preProject
-		build\ReadMe.md = build\ReadMe.md
+		ReadMe.md = ReadMe.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E5945542-26B8-4060-8507-61D003A5A004}"

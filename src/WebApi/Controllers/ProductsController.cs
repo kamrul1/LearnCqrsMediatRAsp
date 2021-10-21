@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Commands;
+using WebApi.Notifications;
 using WebApi.Queries;
 
 namespace WebApi.Controllers
@@ -41,6 +42,8 @@ namespace WebApi.Controllers
         public async Task<ActionResult> AddProduct([FromBody] Product product)
         {
             var productToReturn = await mediator.Send(new AddProductCommand(product));
+
+            await mediator.Publish(new ProductAddedNotification(productToReturn));
 
             var routeValues = new { id = productToReturn.Id};
 

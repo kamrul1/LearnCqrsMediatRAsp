@@ -7,7 +7,8 @@ https://code-maze.com/cqrs-mediatr-in-aspnet-core/
 
 ## Gotcha about Folders
 A small concequence of the way visual studio manages folders is the folder view
-has to be used to move project to src folder.  Remove from solution and then add
+has to be used to [move project to src](https://www.youtube.com/watch?v=OXG6OMUlAs0) folder.  
+Remove from solution and then add
 existing project to get it working again.
 
 

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Behavior;
 using WebApi.DataStore;
 
 namespace WebApi
@@ -30,6 +31,7 @@ namespace WebApi
         {
             services.AddMediatR(typeof(Startup));
             services.AddSingleton<FakeDataStore>();
+            services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

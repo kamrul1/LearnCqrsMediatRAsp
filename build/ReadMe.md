@@ -215,5 +215,57 @@ Here is an example response:
 }
 ```
 
+# Building MediatR Behaviors
+Often applications have cross cutting concerns.  These might include authorization, validating, and logging
 
+Instead of repeating this logic throughout our handlers, we can make use of Behaviors. Behaviors are very 
+similar to ASP.NET Core middleware, in that they accept a request, perform some action, then (optionally) 
+pass along the request.
 
+## Creating Behaviours
+
+Firstly, we define a behaviour class, such as logging for example:
+```csharp
+public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> logger;
+
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    {
+        this.logger = logger;
+    }
+
+    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    {
+        logger.LogInformation($"Handling {typeof(TRequest).Name}");
+
+        var response = await next();
+
+        logger.LogInformation($"Handled {typeof(TResponse).Name}");
+
+        return response;
+    }
+}
+```
+What this code does:
+> 1. We first define a ===LoggingBehavior=== class, taking two type parameters TRequest and TResponse, and implementing the  ===IPipelineBehavior<TRequest, TResponse>=== interface. Simply put, this behavior can operate on any request.
+> 2. We then implement the Handle method, logging before and after we call the ===next()=== delegate.
+
+This logging handler can then be applied to any request, and will log output before and after it is handled.
+
+## register the behavior
+
+Add it in ConfigureServices in Startup:
+```csharp
+services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+```
+
+Running a web api call to any end point produces the following the console window:
+```json
+info: WebApi.Behavior.LoggingBehavior[0]
+      Handling GetProductsQuery
+info: WebApi.Behavior.LoggingBehavior[0]
+      Handled IEnumerable`1
+```
+
+>This shows the logging output before and after our GetProducts query handler was invoked.

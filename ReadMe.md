@@ -1,4 +1,4 @@
-﻿# Markdown File
+﻿# Notes From Following example
 
 Following example course:
  
@@ -11,12 +11,15 @@ has to be used to move project to src folder.  Remove from solution and then add
 existing project to get it working again.
 
 
-# In Startup add mediatR and repo dependency
+## In Startup add mediatR and repo dependency
 
 - services.AddMediatR(typeof(Startup));
 - services.AddSingleton\<FakeDataStore>();
 
-## Requests with MediatR
+<br/>  
+<br/>  
+
+# Requests with MediatR
 
 There are two types of requests in MediatR. One that returns a value, 
 and one that doesn’t. Often this corresponds to reads/queries (returning a value) and writes/commands (usually doesn’t return a value).
@@ -137,8 +140,10 @@ of the created object is available.
 ```csharp
 location: https://localhost:5001/api/Products/6 
 ```
+<br/>  
+<br/>  
 
-## MediatR Notifications
+# MediatR Notifications
 
 This is useful when we need multiple handlers for a single request. Some use cases
 are:
@@ -214,6 +219,8 @@ Here is an example response:
   "name": "string by kam evt: Cache Invalidated evt: Email sent"
 }
 ```
+<br/>  
+<br/>  
 
 # Building MediatR Behaviors
 Often applications have cross cutting concerns.  These might include authorization, validating, and logging
